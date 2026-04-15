@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: justmer-pj-validation
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: TERMINAL_FIELD
+        value: TERMINAL_NAME
+      - key: CARRIER_FIELD
+        value: CARRIER
+      - key: STRICT_THRESHOLD
+        value: 0.95
+      - key: SUGGEST_THRESHOLD
+        value: 0.85
