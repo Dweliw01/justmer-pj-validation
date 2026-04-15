@@ -4,8 +4,14 @@ This project provides a Node.js validation service for DocuWare Cloud.
 
 ## What it validates
 
-- `TERMINAL_NAME` via `/validate-terminal`
-- `CARRIER` via `/validate-carrier`
+DocuWare sends all index values to one validation endpoint, so this service now supports:
+
+- `POST /validate` to validate both `TERMINAL_NAME` and `CARRIER` in a single request
+
+It also still supports these optional test endpoints:
+
+- `POST /validate-terminal`
+- `POST /validate-carrier`
 
 The service reads approved values from:
 
@@ -23,10 +29,30 @@ npm start
 
 - `http://localhost:3000/`
 - `http://localhost:3000/health`
+- `http://localhost:3000/validate`
 - `http://localhost:3000/validate-terminal`
 - `http://localhost:3000/validate-carrier`
 
-## Example terminal test
+## Example full DocuWare-style test
+
+```bash
+curl -X POST http://localhost:3000/validate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "Values": [
+      {
+        "FieldName": "TERMINAL_NAME",
+        "Item": "Buckeye Newrk"
+      },
+      {
+        "FieldName": "CARRIER",
+        "Item": "Pilott"
+      }
+    ]
+  }'
+```
+
+## Example terminal-only test
 
 ```bash
 curl -X POST http://localhost:3000/validate-terminal \
@@ -41,7 +67,7 @@ curl -X POST http://localhost:3000/validate-terminal \
   }'
 ```
 
-## Example carrier test
+## Example carrier-only test
 
 ```bash
 curl -X POST http://localhost:3000/validate-carrier \
@@ -63,12 +89,11 @@ curl -X POST http://localhost:3000/validate-carrier \
 - `STRICT_THRESHOLD=0.95`
 - `SUGGEST_THRESHOLD=0.85`
 
-## DocuWare web service URLs
+## DocuWare web service URL
 
-After deploying to Render, register these in DocuWare:
+After deploying to Render, register this in DocuWare:
 
-- `https://your-render-url.onrender.com/validate-terminal`
-- `https://your-render-url.onrender.com/validate-carrier`
+- `https://your-render-url.onrender.com/validate`
 
 ## Important
 

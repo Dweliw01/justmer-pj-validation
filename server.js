@@ -99,6 +99,32 @@ function getFieldValue(values, fieldName) {
   return match ? match.Item : null;
 }
 
+function validateAllFields(values) {
+  const terminalValue = getFieldValue(values, TERMINAL_FIELD);
+  const carrierValue = getFieldValue(values, CARRIER_FIELD);
+
+  const terminalResult = validateAgainstList(terminalValue, terminals, "terminal name");
+  if (terminalResult.Status !== "OK") {
+    return {
+      Status: "Failed",
+      Reason: `TERMINAL_NAME: ${terminalResult.Reason}`
+    };
+  }
+
+  const carrierResult = validateAgainstList(carrierValue, carriers, "carrier name");
+  if (carrierResult.Status !== "OK") {
+    return {
+      Status: "Failed",
+      Reason: `CARRIER: ${carrierResult.Reason}`
+    };
+  }
+
+  return {
+    Status: "OK",
+    Reason: "Everything is fine"
+  };
+}
+
 app.get("/", (req, res) => {
   res.send("Justmer PJ validation service is running.");
 });
@@ -109,6 +135,12 @@ app.get("/health", (req, res) => {
     terminalsLoaded: terminals.length,
     carriersLoaded: carriers.length
   });
+});
+
+app.post("/validate", (req, res) => {
+  const values = req.body.Values || [];
+  const result = validateAllFields(values);
+  res.json(result);
 });
 
 app.post("/validate-terminal", (req, res) => {
